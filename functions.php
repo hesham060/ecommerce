@@ -16,11 +16,10 @@ function getAllData($table, $where = null, $values = null, $json = true)
     global $con;
     $data = array();
     if ($where == null) {
-        $stmt = $con->prepare("SELECT  * FROM $table  ");
+        $stmt = $con->prepare("SELECT  * FROM $table   ");
     } else {
         $stmt = $con->prepare("SELECT  * FROM $table WHERE   $where ");
     }
-
     $stmt->execute($values);
     $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
     $count  = $stmt->rowCount();
@@ -32,17 +31,15 @@ function getAllData($table, $where = null, $values = null, $json = true)
         }
         return $count;
     } else {
-
         if ($count > 0) {
-            return $data;
+            return  array("status" => "success", "data" => $data);
         } else {
-            return json_encode(array(
-                "status" => "failure"
-            ),);
+            return  array("status" => "failure");
         }
     }
 }
-function getData($table, $where = null, $values = null)
+
+function getData($table, $where = null, $values = null, $json = true)   
 {
     global $con;
     $data = array();
@@ -50,12 +47,15 @@ function getData($table, $where = null, $values = null)
     $stmt->execute($values);
     $data = $stmt->fetch(PDO::FETCH_ASSOC);
     $count  = $stmt->rowCount();
-    if ($count > 0) {
-        echo json_encode(array("status" => "success", "data" => $data));
+    if ($json == true) {
+        if ($count > 0) {
+            echo json_encode(array("status" => "success", "data" => $data));
+        } else {
+            echo json_encode(array("status" => "failure"));
+        }
     } else {
-        echo json_encode(array("status" => "failure"));
+        return $count;
     }
-    return $count;
 }
 
 
